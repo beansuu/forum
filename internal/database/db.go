@@ -6,7 +6,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 )
 
-var db *dql.DB
+var db *sql.DB
 
 func Initialize() error {
 	var err error
