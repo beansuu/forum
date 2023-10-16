@@ -32,7 +32,6 @@ func createPostHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	templates.ExecuteTemplate(w, "create.html", nil)
-	return
 }
 
 func displayPostHandler(w http.ResponseWriter, r *http.Request) {
@@ -63,6 +62,32 @@ func main() {
 
 	http.HandleFunc("/create-post", createPostHandler)
 	http.HandleFunc("/display-post", displayPostHandler)
+
+	http.HandleFunc("/update", func(w http.ResponseWriter, r *http.Request) {
+		// For demonstration, fetching values from query parameters.
+		// Ideally, you'd use a form's POST data.
+		postID, _ := strconv.ParseInt(r.URL.Query().Get("postID"), 10, 64)
+		title := r.URL.Query().Get("title")
+		content := r.URL.Query().Get("content")
+
+		err := posts.UpdatePost(postID, title, content)
+		if err != nil {
+			http.Error(w, "Unable to update post", http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprintf(w, "Post updated successfully!")
+	})
+
+	http.HandleFunc("/delete", func(w http.ResponseWriter, r *http.Request) {
+		postID, _ := strconv.ParseInt(r.URL.Query().Get("postID"), 10, 64)
+
+		err := posts.DeletePost(postID)
+		if err != nil {
+			http.Error(w, "Unable to delete post", http.StatusInternalServerError)
+			return
+		}
+		fmt.Fprintf(w, "Post deleted successfully!")
+	})
 
 	http.ListenAndServe(":8080", nil)
 }

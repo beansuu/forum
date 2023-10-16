@@ -42,7 +42,7 @@ func GetPost(id int64) (*Post, error) {
 	return post, nil
 }
 
-func UpdatePost(id int64, title, content, author string) error {
+func UpdatePost(postID int64, title string, content string) error {
 	db, err := sql.Open("sqlite3", "./forum.db")
 	if err != nil {
 		return err
@@ -75,14 +75,9 @@ func DeletePost(postID int64) error {
 	}
 	defer statement.Close()
 
-	_, err + statement.Exec(postID)
+	_, err = statement.Exec(postID)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-func DeletePost(id int64) error {
-	_, err := db.Exec("DELETE FROM posts WHERE id=?", id)
-	return err
 }
