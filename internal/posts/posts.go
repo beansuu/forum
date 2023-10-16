@@ -43,8 +43,43 @@ func GetPost(id int64) (*Post, error) {
 }
 
 func UpdatePost(id int64, title, content, author string) error {
-	_, err := db.Exec("UPDATE posts SET title=?, content=?, author=? WHERE id=?", title, content, author, id)
-	return err
+	db, err := sql.Open("sqlite3", "./forum.db")
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	statement, err := db.Prepare("UPDATE posts SET title=?, content=? WHERE id=?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err = statement.Exec(title, content, postID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func DeletePost(postID int64) error {
+	db, err := sql.Open("sqlite3", "./forum.db")
+	if err != nil {
+		return err
+	}
+	defer db.Close()
+
+	statement, err := db.Prepare("DELETE FROM posts WHERE id=?")
+	if err != nil {
+		return err
+	}
+	defer statement.Close()
+
+	_, err + statement.Exec(postID)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func DeletePost(id int64) error {
