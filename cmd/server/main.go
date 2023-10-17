@@ -49,6 +49,21 @@ func displayPostHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "display.html", post)
 }
 
+func updateFormHandler(w http.ResponseWriter, r *http.Request) {
+	postIDStr := r.URL.Query().Get("postID")
+	postID, err := strconv.ParseInt(postIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+	post, err := posts.GetPost(postID)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+	templates.ExecuteTemplate(w, "update.html", post)
+}
+
 func main() {
 
 	err := database.Initialize()
@@ -60,6 +75,7 @@ func main() {
 		fmt.Fprintf(w, "Welcome to the forum!")
 	})
 
+	http.HandleFunc("/update-form", updateFormHandler)
 	http.HandleFunc("/create-post", createPostHandler)
 	http.HandleFunc("/display-post", displayPostHandler)
 

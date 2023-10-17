@@ -1,6 +1,15 @@
-<h1>{{.Title}}</h1>
-<p>Author: {{.Author}}</p>
-<p>{{.Content}}</p>
-
-<a href="/edit-post?id={{.ID}}">Edit</a>
-<a href="/delete-post?id={{.ID}}">Delete</a>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display Post</title>
+    
+</head>
+<body>
+    <h2>{{.Title}}</h2>
+    <p>{{.Content}}</p>
+    <p><strong>Author:</strong> {{.Author}}</p>
+    <a href="/update-form?postID={{.ID}}">Update</a> | <a href="/delete?postID={{.ID}}">Delete</a>
+</body>
+</html>
