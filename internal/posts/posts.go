@@ -31,6 +31,7 @@ func CreatePost(title, content, author string) (int64, error) {
 }
 
 func GetPost(id int64) (*Post, error) {
+	db = database.GetDB()
 	post := &Post{}
 	err := db.QueryRow("SELECT id, title, content, author FROM posts WHERE id=?", id).Scan(&post.ID, &post.Title, &post.Content, &post.Author)
 	if err != nil {
@@ -40,6 +41,7 @@ func GetPost(id int64) (*Post, error) {
 }
 
 func UpdatePost(postID int64, title string, content string) error {
+	db = database.GetDB()
 	db, err := sql.Open("sqlite3", "./forum.db")
 	if err != nil {
 		return err
@@ -60,6 +62,7 @@ func UpdatePost(postID int64, title string, content string) error {
 }
 
 func DeletePost(postID int64) error {
+	db = database.GetDB()
 	db, err := sql.Open("sqlite3", "./forum.db")
 	if err != nil {
 		return err
@@ -77,4 +80,23 @@ func DeletePost(postID int64) error {
 		return err
 	}
 	return nil
+}
+
+func GetAllPosts() ([]*Post, error) {
+	db = database.GetDB()
+	rows, err := db.Query("SELECT id, title, content, author FROM posts")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []*Post
+	for rows.Next() {
+		post := &Post{}
+		if err := rows.Scan(&post.ID, &post.Title, &post.Content, &post.Author); err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+	return posts, nil
 }

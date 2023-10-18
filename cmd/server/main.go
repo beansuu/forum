@@ -64,6 +64,19 @@ func updateFormHandler(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "update.html", post)
 }
 
+func displayAllPostsHandler(w http.ResponseWriter, r *http.Request) {
+	posts, err := posts.GetAllPosts()
+	if err != nil {
+		fmt.Println("Error retrieving posts:", err) // Print to console
+		http.Error(w, "Unable to retrieve posts", http.StatusInternalServerError)
+		return
+	}
+	err = templates.ExecuteTemplate(w, "posts.html", posts)
+	if err != nil {
+		fmt.Println("Template execution error:", err) // Print to console
+	}
+}
+
 func main() {
 
 	err := database.Initialize()
@@ -78,6 +91,7 @@ func main() {
 	http.HandleFunc("/update-form", updateFormHandler)
 	http.HandleFunc("/create-post", createPostHandler)
 	http.HandleFunc("/display-post", displayPostHandler)
+	http.HandleFunc("/all-posts", displayAllPostsHandler)
 
 	http.HandleFunc("/update", func(w http.ResponseWriter, r *http.Request) {
 		// For demonstration, fetching values from query parameters.

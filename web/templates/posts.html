@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Posts</title>
+</head>
+<body>
+    <h1>All Posts</h1>
+    {{range .}}
+        <div class="post">
+            <h2>{{.Title}}</h2>
+            <p>{{.Content}}</p>
+            <p><strong>Author:</strong> {{.Author}}</p>
+        </div>
+    {{else}}
+        <p>No posts available.</p>
+    {{end}}
+</body>
+</html>
