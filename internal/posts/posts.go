@@ -14,11 +14,8 @@ type Post struct {
 
 var db *sql.DB
 
-func init() {
-	db = database.GetDB()
-}
-
 func CreatePost(title, content, author string) (int64, error) {
+	db := database.GetDB()
 	statement, err := db.Prepare("INSERT INTO posts(title, content, author) VALUES(?, ?, ?)")
 	if err != nil {
 		return 0, err
