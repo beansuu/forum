@@ -12,6 +12,13 @@ type Post struct {
 	Author  string
 }
 
+type Comment struct {
+	ID      int64
+	PostID  int64
+	Author  string
+	Content string
+}
+
 var db *sql.DB
 
 func CreatePost(title, content, author string) (int64, error) {
