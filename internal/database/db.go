@@ -31,7 +31,7 @@ func Initialize() error {
 	}
 
 	createCommentsTable := `
-	CREATE TABLE comments (
+	CREATE TABLE IF NOT EXISTS comments (
 		id INTEGER PRIMARY KEY,
 		post_id INTEGER,
 		author TEXT,
@@ -46,7 +46,7 @@ func Initialize() error {
 	}
 
 	createLikesTable := `
-	CREATE TABLE post_likes (
+	CREATE TABLE IF NOT EXISTS post_likes (
 		id INTEGER PRIMARY KEY,
 		post_id INTEGER,
 		user_id INTEGER,
@@ -61,7 +61,7 @@ func Initialize() error {
 	}
 
 	createUsersTable := `
-	CREATE TABLE users (
+	CREATE TABLE IF NOT EXISTS users (
 		id INTEGER PRIMARY KEY,
 		username TEXT UNIQUE,
 		password TEXT,  -- preferably a hashed version of the password

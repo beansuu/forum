@@ -11,6 +11,25 @@
             <p>{{.Content}}</p>
             <p><strong>Author:</strong> {{.Author}}</p>
         </div>
+
+        <div class="comments-section">
+            <h3>Comments</h3>
+            <ul id="comments-list">
+                <!-- examples -->
+                <li>John: This is a great post!</li>
+                <li>Alice: I agree with John.</li>
+                <!-- ... -->
+            </ul>
+            <div class="add-comment">
+                <textarea placeholder="Add a comment..."></textarea>
+                <button>Add Comment</button>
+            </div>
+        </div>        
+
+        <div class="likes-dislikes-section">
+            <button class="like-button">👍</button> <span id="like-count">10</span>
+            <button class="dislike-button">👎</button> <span id="dislike-count">2</span>
+        </div>        
     {{else}}
         <p>No posts available.</p>
     {{end}}
