@@ -77,6 +77,94 @@ func displayAllPostsHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func getPostByID(postID string) (*posts.Post, error) {
+	id, err := strconv.ParseInt(postID, 10, 64)
+	if err != nil {
+		return nil, err
+	}
+	return posts.GetPost(id)
+}
+
+func handleLike(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	postIDStr := r.FormValue("postID")
+	postID, err := strconv.ParseInt(postIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	// Fetch post from DB
+	_, err = getPostByID(postIDStr)
+	if err != nil {
+		http.Error(w, "Post not found", http.StatusNotFound)
+		return
+	}
+
+	// Increment like count (and ensure the same user doesn't like more than once)
+	err = incrementLike(postID)
+	if err != nil {
+		http.Error(w, "Error processing like", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect back to the post or wherever you want
+	http.Redirect(w, r, "/post/"+postIDStr, http.StatusSeeOther)
+}
+
+func handleDislike(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodPost {
+		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
+		return
+	}
+
+	postIDStr := r.FormValue("postID")
+	postID, err := strconv.ParseInt(postIDStr, 10, 64)
+	if err != nil {
+		http.Error(w, "Invalid post ID", http.StatusBadRequest)
+		return
+	}
+
+	// Fetch post from DB to ensure it exists
+	_, err = getPostByID(postIDStr)
+	if err != nil {
+		http.Error(w, "Post not found", http.StatusNotFound)
+		return
+	}
+
+	// Increment dislike count (and ensure the same user doesn't dislike more than once)
+	err = incrementDislike(postID)
+	if err != nil {
+		http.Error(w, "Error processing dislike", http.StatusInternalServerError)
+		return
+	}
+
+	// Redirect back to the post or wherever you want
+	http.Redirect(w, r, "/post/"+postIDStr, http.StatusSeeOther)
+}
+
+func incrementLike(postID int64) error {
+	db := database.GetDB()
+	_, err := db.Exec("UPDATE posts SET likes=likes+1 WHERE id=?", postID)
+	if err != nil {
+		return fmt.Errorf("failed to increment likes: %v", err)
+	}
+	return nil
+}
+
+func incrementDislike(postID int64) error {
+	db := database.GetDB()
+	_, err := db.Exec("UPDATE posts SET dislikes=dislikes+1 WHERE id=?", postID)
+	if err != nil {
+		return fmt.Errorf("failed to increment dislikes: %v", err)
+	}
+	return nil
+}
+
 func main() {
 
 	err := database.Initialize()
@@ -92,6 +180,8 @@ func main() {
 	http.HandleFunc("/create-post", createPostHandler)
 	http.HandleFunc("/display-post", displayPostHandler)
 	http.HandleFunc("/all-posts", displayAllPostsHandler)
+	http.HandleFunc("/like", handleLike)
+	http.HandleFunc("/dislike", handleDislike)
 
 	http.HandleFunc("/update", func(w http.ResponseWriter, r *http.Request) {
 		// For demonstration, fetching values from query parameters.

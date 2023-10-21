@@ -26,6 +26,18 @@
             </div>
         </div>        
 
+        <form action="/like" method="post">
+            <input type="hidden" name="postID" value="{{.ID}}">
+            <button type="submit">Like</button>
+        </form>
+
+        <form action="/dislike" method="post">
+            <input type="hidden" name="postID" value="{{.ID}}">
+            <button type="submit">Dislike</button>
+            <span>Likes: {{.Likes}}</span>
+            <span>Dislikes: {{.Dislikes}}</span>
+        </form>
+
         <div class="likes-dislikes-section">
             <button class="like-button">👍</button> <span id="like-count">10</span>
             <button class="dislike-button">👎</button> <span id="dislike-count">2</span>

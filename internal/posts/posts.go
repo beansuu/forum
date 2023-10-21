@@ -6,10 +6,12 @@ import (
 )
 
 type Post struct {
-	ID      int64
-	Title   string
-	Content string
-	Author  string
+	ID       int64
+	Title    string
+	Content  string
+	Author   string
+	Likes    int
+	Dislikes int
 }
 
 type Comment struct {
