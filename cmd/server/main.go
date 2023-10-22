@@ -8,6 +8,10 @@ import (
 	"net/http"
 	"path"
 	"strconv"
+
+	"forum/internal/users"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
 var templates *template.Template
@@ -165,6 +169,71 @@ func incrementDislike(postID int64) error {
 	return nil
 }
 
+func handleRegistration(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		username := r.FormValue("username")
+		password := r.FormValue("password")
+		email := r.FormValue("email")
+
+		// Check if email or username already exists
+		existingUser, err := users.GetUserByEmailOrUsername(username)
+		if err != nil {
+			http.Error(w, "Error checking user", http.StatusInternalServerError)
+			return
+		}
+		if existingUser != nil {
+			http.Error(w, "Username or Email already exists", http.StatusBadRequest)
+			return
+		}
+
+		// Hash the password
+		hashedPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+		if err != nil {
+			http.Error(w, "Error hashing password", http.StatusInternalServerError)
+			return
+		}
+
+		_, err = users.CreateUser(username, string(hashedPassword), email)
+		if err != nil {
+			http.Error(w, "Error creating user", http.StatusInternalServerError)
+			return
+		}
+
+		http.Redirect(w, r, "/login", http.StatusSeeOther)
+	} else {
+		// Render the registration page template
+		templates.ExecuteTemplate(w, "register.html", nil)
+	}
+}
+
+func handleLogin(w http.ResponseWriter, r *http.Request) {
+	if r.Method == http.MethodPost {
+		emailOrUsername := r.FormValue("emailOrUsername")
+		password := r.FormValue("password")
+
+		// Check if user exists
+		user, err := users.GetUserByEmailOrUsername(emailOrUsername)
+		if err != nil {
+			http.Error(w, "Invalid email/username or password", http.StatusUnauthorized)
+			return
+		}
+
+		// Verify the password
+		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
+		if err != nil {
+			http.Error(w, "Invalid email/username or password", http.StatusUnauthorized)
+			return
+		}
+
+		// Here, handle setting session and cookie logic to log the user in
+
+		http.Redirect(w, r, "/all-posts", http.StatusSeeOther)
+	} else {
+		// Render the login page template
+		templates.ExecuteTemplate(w, "login.html", nil)
+	}
+}
+
 func main() {
 
 	err := database.Initialize()
@@ -182,6 +251,8 @@ func main() {
 	http.HandleFunc("/all-posts", displayAllPostsHandler)
 	http.HandleFunc("/like", handleLike)
 	http.HandleFunc("/dislike", handleDislike)
+	http.HandleFunc("/register", handleRegistration)
+	http.HandleFunc("/login", handleLogin)
 
 	http.HandleFunc("/update", func(w http.ResponseWriter, r *http.Request) {
 		// For demonstration, fetching values from query parameters.
