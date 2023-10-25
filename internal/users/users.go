@@ -17,6 +17,11 @@ type User struct {
 	CreatedAt time.Time
 }
 
+type Session struct {
+	UserID    string
+	ExpiresAt time.Time
+}
+
 var db *sql.DB
 
 func getUserByEmail(email string) (*User, error) {
