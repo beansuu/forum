@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"errors"
 	"forum/internal/database"
+	"sync"
 	"time"
 
 	"golang.org/x/crypto/bcrypt"
@@ -21,6 +22,11 @@ type Session struct {
 	UserID    string
 	ExpiresAt time.Time
 }
+
+const SessionDuration = 2 * time.Hour // Example duration
+
+var sessionStore = make(map[string]Session)
+var storeLock = sync.RWMutex{} // To make map access thread-safe
 
 var db *sql.DB
 
