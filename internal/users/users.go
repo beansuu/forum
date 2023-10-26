@@ -7,6 +7,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -29,6 +30,17 @@ var sessionStore = make(map[string]Session)
 var storeLock = sync.RWMutex{} // To make map access thread-safe
 
 var db *sql.DB
+
+func CreateSession(userID string) string {
+	sID, _ := uuid.NewV4() // Generate a new UUID
+	storeLock.Lock()
+	defer storeLock.Unlock()
+	sessionStore[sID.String()] = Session{
+		UserID:    userID,
+		ExpiresAt: time.Now().Add(SessionDuration),
+	}
+	return sID.String()
+}
 
 func getUserByEmail(email string) (*User, error) {
 	db := database.GetDB()
