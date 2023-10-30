@@ -42,6 +42,16 @@ func CreateSession(userID string) string {
 	return sID.String()
 }
 
+func GetUserIdFromSession(sID string) (string, bool) {
+	storeLock.RLock()
+	defer storeLock.RUnlock()
+	session, exists := sessionStore[sID]
+	if !exists || session.ExpiresAt.Before(time.Now()) {
+		return ",", false
+	}
+	return session.UserID, true
+}
+
 func getUserByEmail(email string) (*User, error) {
 	db := database.GetDB()
 	user := &User{}
