@@ -69,16 +69,34 @@ func updateFormHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func displayAllPostsHandler(w http.ResponseWriter, r *http.Request) {
-	posts, err := posts.GetAllPosts()
-	if err != nil {
-		fmt.Println("Error retrieving posts:", err) // Print to console
-		http.Error(w, "Unable to retrieve posts", http.StatusInternalServerError)
+	c, err := r.Cookie("session_id")
+	if err != nil || c == nil {
+		http.Error(w, "Not authenticated", http.StatusUnauthorized)
 		return
 	}
-	err = templates.ExecuteTemplate(w, "posts.html", posts)
-	if err != nil {
-		fmt.Println("Template execution error:", err) // Print to console
+
+	userIDStr, valid := users.GetUserIDFromSession(c.Value)
+	if !valid {
+		http.Error(w, "Invalid session", http.StatusUnauthorized)
+		return
 	}
+
+	// Convert userIDStr (which is a string) to int64
+	userID, err := strconv.ParseInt(userIDStr, 10, 64)
+	if err != nil {
+		fmt.Println("Error converting userIDStr to int64:", err)
+		http.Error(w, "Internal server error", http.StatusInternalServerError)
+		return
+	}
+
+	// Fetch all posts for this user
+	userPosts, err := posts.GetAllPostsForUser(userID)
+	if err != nil {
+		http.Error(w, "Error fetching posts", http.StatusInternalServerError)
+		return
+	}
+
+	templates.ExecuteTemplate(w, "all-posts.html", userPosts)
 }
 
 func getPostByID(postID string) (*posts.Post, error) {

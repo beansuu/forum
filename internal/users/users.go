@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"forum/internal/database"
+	"net/http"
+	"strconv"
 	"sync"
 	"time"
 
@@ -42,7 +44,7 @@ func CreateSession(userID string) string {
 	return sID.String()
 }
 
-func GetUserIdFromSession(sID string) (string, bool) {
+func GetUserIDFromSession(sID string) (string, bool) {
 	storeLock.RLock()
 	defer storeLock.RUnlock()
 	session, exists := sessionStore[sID]
@@ -143,7 +145,7 @@ func Register(username, password, email string) error {
 	return err
 }
 
-func Login(email, password string) (*User, error) {
+func Login(email, password string, w http.ResponseWriter) (*User, error) {
 	user, err := getUserByEmail(email)
 	if err != nil {
 		return nil, err
@@ -157,7 +159,15 @@ func Login(email, password string) (*User, error) {
 		return nil, errors.New("incorrect password")
 	}
 
-	// Create a session (implementation depends on your session management strategy)
+	// Create a session as cookie
+	sID := CreateSession(strconv.Itoa(user.ID))
+	http.SetCookie(w, &http.Cookie{
+		Name:     "session_id",
+		Value:    sID,
+		Expires:  time.Now().Add(SessionDuration),
+		Path:     "/",
+		HttpOnly: true,
+	})
 
 	return user, nil
 }

@@ -109,3 +109,24 @@ func GetAllPosts() ([]*Post, error) {
 	}
 	return posts, nil
 }
+
+func GetAllPostsForUser(userID int64) ([]Post, error) {
+	db := database.GetDB()
+	rows, err := db.Query("SELECT * FROM posts WHERE author_id=?", userID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var posts []Post
+	for rows.Next() {
+		var post Post
+		err = rows.Scan(&post.ID, &post.Title, &post.Content, &post.Author, &post.Likes, &post.Dislikes)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, post)
+	}
+
+	return posts, nil
+}
