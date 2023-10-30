@@ -232,14 +232,14 @@ func handleLogin(w http.ResponseWriter, r *http.Request) {
 		// Check if user exists
 		user, err := users.GetUserByEmailOrUsername(emailOrUsername)
 		if err != nil {
-			http.Error(w, "Invalid email/username or password", http.StatusUnauthorized)
+			http.Error(w, "User doesn't exist", http.StatusUnauthorized)
 			return
 		}
 
 		// Verify the password
 		err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 		if err != nil {
-			http.Error(w, "Invalid email/username or password", http.StatusUnauthorized)
+			http.Error(w, "Wrong password", http.StatusUnauthorized)
 			return
 		}
 
