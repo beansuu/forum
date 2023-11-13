@@ -1,9 +1,13 @@
 package main
 
 import (
+	"forum/internal/controller"
+	"forum/internal/repository"
 	"log"
 	"net/http"
 	"time"
+
+	"forum/internal/service.go"
 
 	_ "github.com/mattn/go-sqlite3"
 )
