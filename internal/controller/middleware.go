@@ -1,8 +1,17 @@
 package controller
 
-type ctxKey int8
+import (
+	"context"
+	"forum/internal/models"
+	"net/http"
+	"time"
+)
+
+// ctxKey is a custom type used as a key for context values in middleware functions.
+type ctxKey int
 
 const (
+	// ctxKeyUser is a context key for storing user information in middleware functions.
 	ctxKeyUser ctxKey = iota
 )
 
@@ -10,7 +19,7 @@ func (h *Handler) authenticateUser(next http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var (
 			user models.User
-			err	 error
+			err  error
 		)
 
 		cookie, err := r.Cookie("sessionID")
