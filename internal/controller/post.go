@@ -13,12 +13,14 @@ import (
 	"forum/internal/service.go"
 )
 
+// index represents the data needed to render the index page.
 type index struct {
 	User     models.User
 	Post     *models.Post
 	Comments []*models.Comment
 }
 
+// createPost handles the creation of a new post.
 func (h *Handler) createPost(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("web/template/create-post.html")
 	if err != nil {
@@ -72,6 +74,7 @@ func (h *Handler) createPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getPostsByCategory handles the retrieval of posts by category.
 func (h *Handler) getPostsByCategory(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		h.errorPage(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
@@ -101,6 +104,7 @@ func (h *Handler) getPostsByCategory(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getPost handles the retrieval of a single post.
 func (h *Handler) getPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != "GET" {
 		h.errorPage(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
@@ -143,6 +147,7 @@ func (h *Handler) getPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getCreatedPost handles the retrieval of posts created by the user.
 func (h *Handler) getCreatedPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		h.errorPage(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
@@ -168,6 +173,7 @@ func (h *Handler) getCreatedPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// getLikedPost handles the retrieval of posts liked by the user.
 func (h *Handler) getLikedPost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		h.errorPage(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
@@ -196,6 +202,7 @@ func (h *Handler) getLikedPost(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+// likePost handles the liking of a post.
 func (h *Handler) likePost(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		h.errorPage(w, http.StatusMethodNotAllowed, http.StatusText(http.StatusMethodNotAllowed))
@@ -219,6 +226,7 @@ func (h *Handler) likePost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/get-post/%v", id), 302)
 }
 
+// disLikePost handles the disliking of a post.
 func (h *Handler) disLikePost(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(strings.TrimPrefix(r.URL.Path, "/dislike/"))
 	if err != nil {
@@ -236,6 +244,7 @@ func (h *Handler) disLikePost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, fmt.Sprintf("/get-post/%v", id), 302)
 }
 
+// updatePost handles the updating of a post.
 func (h *Handler) updatePost(w http.ResponseWriter, r *http.Request) {
 	tmpl, err := template.ParseFiles("web/partials/layout.html", "web/template/editpost.html", "web/template/privat.navbar.html")
 	if err != nil {
@@ -275,6 +284,7 @@ func (h *Handler) updatePost(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/", 302)
 }
 
+// deletePost handles the deletion of a post.
 func (h *Handler) deletePost(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.Atoi(r.FormValue("id"))
 	if err != nil {
