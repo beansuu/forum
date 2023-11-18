@@ -39,10 +39,10 @@ func (h *Handler) authenticateUser(next http.HandlerFunc) http.HandlerFunc {
 				h.errorPage(w, http.StatusInternalServerError, err.Error())
 				return
 			}
-			next.ServeHttp(w, r.WithContext(context.WithValue(r.Context(), ctxKeyUser, models.User{})))
+			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyUser, models.User{})))
 			return
 		}
 
-		next.ServeHttp(w, r.WithContext(context.WithValue(r.Context(), ctxKeyUser, user)))
+		next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyUser, user)))
 	}
 }
