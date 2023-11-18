@@ -7,6 +7,7 @@ import (
 	"log"
 )
 
+// PostItem is an interface that defines the methods for interacting with the post repository.
 type PostItem interface {
 	CreatePost(post *models.Post) error
 	GetAllPosts() (posts []models.Post, err error)
@@ -25,14 +26,17 @@ type PostItem interface {
 	HasUserDislike(username string, postid int) error
 }
 
+// PostStorage is a struct that implements the PostItem interface.
 type PostStorage struct {
 	db *sql.DB
 }
 
+// NewPostSqlite returns a new instance of PostStorage.
 func NewPostSqlite(db *sql.DB) *PostStorage {
 	return &PostStorage{db: db}
 }
 
+// CreatePost creates a new post in the database.
 func (p *PostStorage) CreatePost(post *models.Post) error {
 	query := fmt.Sprintf(`INSERT INTO post (userid, title, content, about) values ($1, $2, $3, $4)`)
 	result, err := p.db.Exec(query, post.UserID, post.Title, post.Content, post.About)
@@ -51,6 +55,7 @@ func (p *PostStorage) CreatePost(post *models.Post) error {
 	return nil
 }
 
+// GetAllPosts returns all posts from the database.
 func (p *PostStorage) GetAllPosts() ([]models.Post, error) {
 	var posts []models.Post
 	rows, err := p.db.Query("SELECT id, userid, title, content, about FROM post")
@@ -69,6 +74,7 @@ func (p *PostStorage) GetAllPosts() ([]models.Post, error) {
 	return posts, nil
 }
 
+// GetPostsByCategory returns all posts that belong to a specific category.
 func (s *PostStorage) GetPostsByCategory(category string) ([]models.Post, error) {
 	var p []models.Post
 	query := `SELECT id, userid, title, content, about, like, dislike FROM post WHERE id IN (SELECT postId FROM post_category WHERE category=$1);`
@@ -86,6 +92,7 @@ func (s *PostStorage) GetPostsByCategory(category string) ([]models.Post, error)
 	return p, nil
 }
 
+// GetCreatedPosts returns all posts created by a specific user.
 func (p *PostStorage) GetCreatedPosts(userID int) ([]models.Post, error) {
 	var posts []models.Post
 	rows, err := p.db.Query("SELECT id, userid, title, content, about FROM post WHERE userid=$1", userID)
@@ -104,6 +111,7 @@ func (p *PostStorage) GetCreatedPosts(userID int) ([]models.Post, error) {
 	return posts, nil
 }
 
+// GetLikedPosts returns all posts liked by a specific user.
 func (p *PostStorage) GetLikedPosts(username string) ([]models.Post, error) {
 	var posts []models.Post
 	rows, err := p.db.Query("SELECT id, userid, title, content, about FROM post WHERE id IN (SELECT postid FROM like WHERE username=$1);", username)
@@ -122,6 +130,7 @@ func (p *PostStorage) GetLikedPosts(username string) ([]models.Post, error) {
 	return posts, nil
 }
 
+// GetPostByID returns a post with a specific ID.
 func (p *PostStorage) GetPostByID(id int) (models.Post, error) {
 	query := `SELECT id, title, content, like, dislike FROM post WHERE id=$1;`
 	row := p.db.QueryRow(query, id)
@@ -134,6 +143,7 @@ func (p *PostStorage) GetPostByID(id int) (models.Post, error) {
 	return post, nil
 }
 
+// GetCategoriesByPostID returns all categories that a post belongs to.
 func (s *PostStorage) GetCategoriesByPostID(postId int) ([]string, error) {
 	queryCategory := `SELECT category FROM post_category where postId=$1;`
 	categoryRows, err := s.db.Query(queryCategory, postId)
@@ -151,6 +161,7 @@ func (s *PostStorage) GetCategoriesByPostID(postId int) ([]string, error) {
 	return category, nil
 }
 
+// UpdatePost updates a post with new information.
 func (p *PostStorage) UpdatePost(id, like, dislike int, title, content string) error {
 	query, err := p.db.Prepare(`UPDATE post SET title=?, content=?, like=?, dislike=? WHERE id=?;`)
 	if err != nil {
@@ -165,6 +176,7 @@ func (p *PostStorage) UpdatePost(id, like, dislike int, title, content string) e
 	return nil
 }
 
+// DeletePost deletes a post with a specific ID.
 func (p *PostStorage) DeletePost(id int) error {
 	query := `DELETE FROM post WHERE id=?`
 	_, err := p.db.Exec(query, id)
@@ -175,6 +187,7 @@ func (p *PostStorage) DeletePost(id int) error {
 	return nil
 }
 
+// LikePost adds a like to a post by a specific user.
 func (p *PostStorage) LikePost(username string, postid int) error {
 	query := `INSERT INTO like (username, postid) values ($1, $2)`
 
@@ -193,6 +206,7 @@ func (p *PostStorage) LikePost(username string, postid int) error {
 	return nil
 }
 
+// DisLikePost adds a dislike to a post by a specific user.
 func (p *PostStorage) DisLikePost(username string, postid int) error {
 	query := `INSERT INTO dislike (username, postid) values ($1, $2)`
 
@@ -210,6 +224,7 @@ func (p *PostStorage) DisLikePost(username string, postid int) error {
 	return err
 }
 
+// RemoveLikePost removes a like from a post.
 func (p *PostStorage) RemoveLikePost(id int) error {
 	stmt, err := p.db.Prepare(`UPDATE post SET like = like - 1 WHERE id = $1;`)
 	if err != nil {
@@ -223,6 +238,7 @@ func (p *PostStorage) RemoveLikePost(id int) error {
 	return nil
 }
 
+// RemoveDisLikePost removes a dislike from a post.
 func (p *PostStorage) RemoveDisLikePost(id int) error {
 	stmt, err := p.db.Prepare(`UPDATE post SET dislike = dislike - 1 WHERE id = $1;`)
 	if err != nil {
@@ -236,6 +252,7 @@ func (p *PostStorage) RemoveDisLikePost(id int) error {
 	return nil
 }
 
+// HasUserLiked checks if a user has liked a post and removes the like if they have.
 func (p *PostStorage) HasUserLiked(username string, postid int) error {
 	var u string
 	query := `SELECT username FROM like WHERE postid=? AND username = $2`
@@ -252,6 +269,7 @@ func (p *PostStorage) HasUserLiked(username string, postid int) error {
 	return nil
 }
 
+// HasUserDislike checks if a user has disliked a post and removes the dislike if they have.
 func (p *PostStorage) HasUserDislike(username string, postid int) error {
 	var u string
 	query := `SELECT username FROM dislike WHERE postid=? AND username = $2`

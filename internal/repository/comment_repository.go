@@ -6,6 +6,7 @@ import (
 	"forum/internal/models"
 )
 
+// Comment is an interface that defines methods for interacting with comments in the database.
 type Comment interface {
 	CreateComment(comment *models.Comment) error
 	GetComments(postID int) ([]*models.Comment, error)
@@ -18,14 +19,17 @@ type Comment interface {
 	DislikeComment(commentID int, username string) error
 }
 
+// CommentStorage is a struct that implements the Comment interface.
 type CommentStorage struct {
 	db *sql.DB
 }
 
+// NewCommentSqlite returns a new instance of CommentStorage.
 func NewCommentSqlite(db *sql.DB) *CommentStorage {
 	return &CommentStorage{db: db}
 }
 
+// CreateComment creates a new comment in the database.
 func (c *CommentStorage) CreateComment(comment *models.Comment) error {
 	query := fmt.Sprintf(`INSERT INTO comment (author, text, postid) values ($1, $2, $3)`)
 	res, err := c.db.Exec(query, comment.Author, comment.Text, comment.PostID)
@@ -44,6 +48,7 @@ func (c *CommentStorage) CreateComment(comment *models.Comment) error {
 	return nil
 }
 
+// GetComments returns all comments for a given post ID.
 func (c *CommentStorage) GetComments(postID int) ([]*models.Comment, error) {
 	var comments []*models.Comment
 	query := fmt.Sprintf(`SELECT * FROM comment WHERE postid = $1;`)
@@ -63,6 +68,7 @@ func (c *CommentStorage) GetComments(postID int) ([]*models.Comment, error) {
 	return comments, nil
 }
 
+// GetCommentByID returns a comment with a given ID.
 func (c *CommentStorage) GetCommentByID(commentID int) (models.Comment, error) {
 	var comment models.Comment
 
@@ -77,6 +83,7 @@ func (c *CommentStorage) GetCommentByID(commentID int) (models.Comment, error) {
 	return comment, nil
 }
 
+// RemoveLikeComment removes a like from a comment.
 func (s *CommentStorage) RemoveLikeComment(commentID int, username string) error {
 	query := `DELETE FROM like WHERE commentId = $1 AND username = $2;`
 	_, err := s.db.Exec(query, commentID, username)
@@ -91,6 +98,7 @@ func (s *CommentStorage) RemoveLikeComment(commentID int, username string) error
 	return nil
 }
 
+// RemoveDislikeComment removes a dislike from a comment.
 func (s *CommentStorage) RemoveDislikeComment(commentID int, username string) error {
 	query := `DELETE FROM dislike WHERE commentId = $1 AND username = $2;`
 	_, err := s.db.Exec(query, commentID, username)
@@ -105,6 +113,7 @@ func (s *CommentStorage) RemoveDislikeComment(commentID int, username string) er
 	return nil
 }
 
+// CommentHasLike checks if a comment has a like from a given user.
 func (s *CommentStorage) CommentHasLike(commentID int, username string) error {
 	var u, query string
 	query = `SELECT username FROM like WHERE commentId = $1 AND username = $2;`
@@ -115,6 +124,7 @@ func (s *CommentStorage) CommentHasLike(commentID int, username string) error {
 	return nil
 }
 
+// CommentHasDislike checks if a comment has a dislike from a given user.
 func (s *CommentStorage) CommentHasDislike(commentID int, username string) error {
 	var u, query string
 	query = `SELECT username FROM dislike WHERE commentId = $1 AND username = $2;`
@@ -125,6 +135,7 @@ func (s *CommentStorage) CommentHasDislike(commentID int, username string) error
 	return nil
 }
 
+// LikeComment adds a like to a comment.
 func (s *CommentStorage) LikeComment(commentID int, username string) error {
 	query := `INSERT INTO like(commentId, username) VALUES ($1, $2);`
 	_, err := s.db.Exec(query, commentID, username)
@@ -139,6 +150,7 @@ func (s *CommentStorage) LikeComment(commentID int, username string) error {
 	return nil
 }
 
+// DislikeComment adds a dislike to a comment.
 func (s *CommentStorage) DislikeComment(commentID int, username string) error {
 	query := `INSERT INTO dislike(commentId, username) VALUES ($1, $2);`
 	_, err := s.db.Exec(query, commentID, username)
