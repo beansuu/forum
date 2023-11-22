@@ -2,13 +2,20 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="../static/css/newStyle.css" />
+    <link rel="shortcut icon" href="#" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
     <div class="sidebar close">
       <a href="/">
         <div class="logo-details">
-          <span class="logo_name">beansu</span>
+          <i class='bx bx-code-curly'></i>
+          <span class="logo_name">Forum</span>
         </div>
       </a>
 
@@ -16,6 +23,7 @@
         {{ if not .User.ID}}
         <li class="login">
           <a href="/sign-in">
+            <i class="bx bx-log-in-circle"></i>
             <span class="link_name">Login</span>
           </a>
           <ul class="sub-menu blank">
@@ -25,6 +33,7 @@
         {{else}}
         <li class="login">
           <a href="/logout">
+            <i class="bx bx-log-in-circle"></i>
             <span class="link_name">Logout</span>
           </a>
           <ul class="sub-menu blank">
@@ -45,6 +54,7 @@
         {{ if .User.ID }}
         <li class="write">
           <a href="/create-post">
+            <i class="bx bx-edit"></i>
             <span class="link_name">Create post</span>
           </a>
           <ul class="sub-menu blank">
@@ -57,8 +67,10 @@
         <li>
           <div class="iocn-link">
             <a href="#">
+              <i class="bx bx-book-alt"></i>
               <span class="link_name">Filter</span>
             </a>
+            <i class="bx bxs-chevron-down arrow"></i>
           </div>
           <ul class="sub-menu">
             <li><a class="link_name" href="#">Filter</a></li>
@@ -71,10 +83,12 @@
         {{ end }}
 
         <li>
-          <div class="icon-link">
+          <div class="iocn-link">
             <a href="#">
+              <i class="bx bx-collection"></i>
               <span class="link_name">Category</span>
             </a>
+            <i class="bx bxs-chevron-down arrow"></i>
           </div>
           <ul class="sub-menu">
             <li><a class="link_name" href="#">Category</a></li>
@@ -94,14 +108,14 @@
         <li>
           <div class="profile-details">
             <div class="profile-content">
-              <!--<img src="image/profile.jpg" alt="profileImg">-->
             </div>
             <div class="name-job">
               <div class="profile_name">{{ .User.Username }}</div>
               <div class="job">Golang Developer</div>
             </div>
             <a href="/logout" class="btn btn-secondary"
-              ></a>
+              ><i class="bx bx-log-out"></i
+            ></a>
           </div>
         </li>
         {{ end }}
@@ -111,7 +125,7 @@
     <section class="home-section">
       <div class="home-content">
         <div>
-          <!-- <span class="text">Drop Down Sidebar</span> -->
+          <i class="bx bx-menu"></i>
         </div>
       </div>
       <div class="container">
@@ -127,7 +141,7 @@
       let arrow = document.querySelectorAll(".arrow");
       for (var i = 0; i < arrow.length; i++) {
         arrow[i].addEventListener("click", (e) => {
-          let arrowParent = e.target.parentElement.parentElement;
+          let arrowParent = e.target.parentElement.parentElement; //selecting main parent of arrow
           arrowParent.classList.toggle("showMenu");
         });
       }

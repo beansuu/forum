@@ -2,14 +2,22 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
-    <link rel="stylesheet" href="../static/css/create-post.css" />
+    <link rel="stylesheet" href="../static/css/newStyle.css" />
+    <link
+    href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+    rel="stylesheet"
+  />
+  <link rel="shortcut icon" href="#" type="image/x-icon">
+  <link rel="stylesheet" href="http://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.min.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="../static/css/virtual-select.min.css">
   </head>
   <body>
     <div class="sidebar close">
       <a href="/">
         <div class="logo-details">
-          <span class="logo_name">beansu</span>
+          <i class="bx bxl-c-plus-plus"></i>
+          <span class="logo_name">Forum</span>
         </div>
       </a>
 
@@ -17,18 +25,21 @@
         {{ if not .User.ID}}
         <li class="login">
           <a href="/sign-in">
+            <i class="bx bx-log-in-circle"></i>
             <span class="link_name">Login</span>
           </a>
         </li>
         {{else}}
         <li class="login">
           <a href="/logout">
+            <i class="bx bx-log-in-circle"></i>
             <span class="link_name">Logout</span>
           </a>
         </li>
         {{end}}
         <li>
           <a href="/">
+            <i class="bx bx-home"></i>
             <span class="link_name">Home page</span>
           </a>
           <ul class="sub-menu blank">
@@ -38,6 +49,7 @@
         {{ if .User.ID }}
         <li class="write">
           <a href="/create-post">
+            <i class="bx bx-edit"></i>
             <span class="link_name">Create post</span>
           </a>
           <ul class="sub-menu blank">
@@ -48,8 +60,10 @@
         <li>
           <div class="iocn-link">
             <a href="#">
+              <i class="bx bx-book-alt"></i>
               <span class="link_name">Filter</span>
             </a>
+            <i class="bx bxs-chevron-down arrow"></i>
           </div>
           <ul class="sub-menu">
             <li><a class="link_name" href="#">Filter</a></li>
@@ -64,8 +78,10 @@
         <li>
           <div class="iocn-link">
             <a href="#">
+              <i class="bx bx-collection"></i>
               <span class="link_name">Category</span>
             </a>
+            <i class="bx bxs-chevron-down arrow"></i>
           </div>
           <ul class="sub-menu">
             <li><a class="link_name" href="#">Category</a></li>
@@ -91,8 +107,9 @@
               <div class="profile_name">{{ .User.Username }}</div>
               <div class="job">Golang Developer</div>
             </div>
-            <a href="/logout" class="btn btn-secondary">
-            </a>
+            <a href="/logout" class="btn btn-secondary"
+              ><i class="bx bx-log-out"></i
+            ></a>
           </div>
         </li>
         {{ end }}
@@ -101,6 +118,7 @@
 
     <section class="home-section">
       <div class="home-content">
+        <i class="bx bx-menu"></i>
         <span class="text"></span>
       </div>
       <div class="container">
@@ -171,7 +189,7 @@
       let arrow = document.querySelectorAll(".arrow");
       for (var i = 0; i < arrow.length; i++) {
         arrow[i].addEventListener("click", (e) => {
-          let arrowParent = e.target.parentElement.parentElement; 
+          let arrowParent = e.target.parentElement.parentElement; //selecting main parent of arrow
           arrowParent.classList.toggle("showMenu");
         });
       }
@@ -182,5 +200,14 @@
         sidebar.classList.toggle("close");
       });
     </script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.5.1/chosen.jquery.min.js"></script>
+    <script type="text/javascript">$(".chosen-select").chosen({disable_search_threshold: 10});</script>
+
+
+    <script src="../static/js/virtual-select.min.js"></script>
+    <script>VirtualSelect.init({ 
+      ele: '#multipleSelect' 
+    });</script>
   </body>
 </html>

@@ -2,6 +2,12 @@
 <html lang="en" dir="ltr">
   <head>
     <meta charset="UTF-8" />
+    <link rel="stylesheet" href="../static/css/newStyle.css" />
+    <link
+      href="https://unpkg.com/boxicons@2.0.7/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link rel="shortcut icon" href="#" type="image/x-icon">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   </head>
   <body>
@@ -17,18 +23,21 @@
         {{ if not .User.ID}}
         <li class="login">
           <a href="/sign-in">
+            <i class="bx bx-log-in-circle"></i>
             <span class="link_name">Login</span>
           </a>
         </li>
         {{else}}
         <li class="login">
           <a href="/logout">
+            <i class="bx bx-log-in-circle"></i>
             <span class="link_name">Logout</span>
           </a>
         </li>
         {{end}}
         <li>
           <a href="/">
+            <i class="bx bx-home"></i>
             <span class="link_name">Home page</span>
           </a>
           <ul class="sub-menu blank">
@@ -39,6 +48,7 @@
 
         <li class="write">
           <a href="/create-post">
+            <i class="bx bx-edit"></i>
             <span class="link_name">Create post</span>
           </a>
         </li>
@@ -48,8 +58,10 @@
         <li>
           <div class="iocn-link">
             <a href="#">
+              <i class="bx bx-book-alt"></i>
               <span class="link_name">Filter</span>
             </a>
+            <i class="bx bxs-chevron-down arrow"></i>
           </div>
           <ul class="sub-menu">
             <li><a class="link_name" href="#">Filter</a></li>
@@ -63,8 +75,10 @@
         <li>
           <div class="iocn-link">
             <a href="#">
+              <i class="bx bx-collection"></i>
               <span class="link_name">Category</span>
             </a>
+            <i class="bx bxs-chevron-down arrow"></i>
           </div>
           <ul class="sub-menu">
             <li><a class="link_name" href="#">Category</a></li>
@@ -89,7 +103,8 @@
               <div class="job">Golang Developer</div>
             </div>
             <a href="/logout" class="btn btn-secondary"
-              ></a>
+              ><i class="bx bx-log-out"></i
+            ></a>
           </div>
         </li>
         {{ end }}
@@ -114,7 +129,7 @@
             <input type="hidden" name="username" value="{{.User.Username}}" />
             <button class="like_btn">
               <span id="icon"
-                > {{ .Post.Like }}</span
+                ><i class="bx bxs-like"></i> {{ .Post.Like }}</span
               >
             </button>
           </form>
@@ -123,7 +138,7 @@
             <input type="hidden" name="username" value="{{.User.Username}}" />
             <button class="like_btn">
               <span id="icon"
-                > {{ .Post.DisLike }}</span
+                ><i class="bx bxs-dislike"></i> {{ .Post.DisLike }}</span
               >
               <span id="count" name="like"></span>
             </button>
@@ -131,11 +146,11 @@
 
           {{else}}
           <div class="like_btn">
-            <span id="icon"> {{ .Post.Like }}</span>
+            <span id="icon"><i class="bx bxs-like"></i> {{ .Post.Like }}</span>
           </div>
           <div class="like_btn">
             <span id="icon"
-              > {{ .Post.DisLike }}</span
+              ><i class="bx bxs-dislike"></i> {{ .Post.DisLike }}</span
             >
             <span id="count" name="like"></span>
           </div>
@@ -157,7 +172,7 @@
                   />
                   <button class="like_btn">
                     <span class="icon"
-                      >{{ $element.Likes }}</span
+                      ><i class="bx bxs-like"></i>{{ $element.Likes }}</span
                     >
                   
                   </button>
@@ -172,7 +187,7 @@
                 />
                 <button class="like_btn">
                   <span class="icon"
-                    > {{ $element.DisLikes
+                    ><i class="bx bxs-dislike"></i> {{ $element.DisLikes
                     }}</span
                   >
                   <span id="count" name="like"></span>
@@ -187,13 +202,15 @@
               <div class="like">
                 <button class="like_btn">
                   <span class="icon"
-                    >
+                    ><i class="bx bxs-like"></i>{{ $element.Likes }}</span
+                  >
+                
                 </button>
               </div>
 
               <button class="like_btn">
                 <span class="icon"
-                  > {{ $element.DisLikes }}</span
+                  ><i class="bx bxs-dislike"></i> {{ $element.DisLikes }}</span
                 >
                 <span id="count" name="like"></span>
               </button>
@@ -230,7 +247,7 @@
       let arrow = document.querySelectorAll(".arrow");
       for (var i = 0; i < arrow.length; i++) {
         arrow[i].addEventListener("click", (e) => {
-          let arrowParent = e.target.parentElement.parentElement; 
+          let arrowParent = e.target.parentElement.parentElement;
           arrowParent.classList.toggle("showMenu");
         });
       }
