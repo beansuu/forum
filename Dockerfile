@@ -4,8 +4,6 @@ WORKDIR /app
 
 COPY . .
 
-RUN go get github.com/mattn/go-sqlite3
-
-RUN go build -o main ./cmd/server
+RUN go build -o main ./cmd/main.go
 
 CMD ["./main"]
