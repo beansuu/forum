@@ -18,7 +18,10 @@
       <div class="forms">
         <div class="form login">
           <span class="title">Login</span>
-
+          <a href="/" class="button">
+            <span class="uil uil-arrow-left icon"></span>
+            Go Back
+          </a>
           <form method="POST" action="/sign-in">
             {{ if .ErrorMessage }}
             <div class="alert alert-danger" role="alert">
