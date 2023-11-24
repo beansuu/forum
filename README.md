@@ -28,11 +28,11 @@ Basic Docker knowledge is recommended; refer to the provided Docker basics resou
 ### Using Docker
 1.  Clone the repository
 
-2. Build Docker image: <code>docker image build -f Dockerfile -t <name_of_the_image> .</code> Example: <code>docker image build -f Dockerfile -t ascii-art-web1 .</code>
+2. Build Docker image: <code>docker image build -f Dockerfile -t <name_of_the_image> .</code> Example: <code>docker image build -f Dockerfile -t forum .</code>
 
-3. Start the container: docker container <code>run -p <port_you_what_to_run> --detach --name <name_of_the_container> <name_of_the_image></code> Example: <code>docker container run -p 8070:8070 --detach --name dockerized-ascii-art ascii-art-web1</code>
+3. Start the container: docker container <code>run -p <port_you_what_to_run> --detach --name <name_of_the_container> <name_of_the_image></code> Example: <code>docker container run -p 8000:8000 --detach --name dockerized-forum forum</code>
 
-4. Run the container to start server: <code>docker exec -it <container_name> /app/bin Example: docker exec -it dockerized-ascii-art /app/bin</code>
+4. Run the container to start server: <code>docker exec -it <container_name> ./main</code> Example: <code>docker exec -it dockerized-forum ./main</code>
 
 ### For local testing:
 
