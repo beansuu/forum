@@ -48,7 +48,7 @@ After completing tests, run the following to clean up images
 ```
 
 ## Authors
-### Mauno Talli 
+### Mauno Tälli 
 <a href="https://01.kood.tech/git/mtalli">@mtalli</a>
 
 ### Andreas Selge 
