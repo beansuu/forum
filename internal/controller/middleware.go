@@ -34,12 +34,16 @@ func (h *Handler) authenticateUser(next http.HandlerFunc) http.HandlerFunc {
 			return
 		}
 
-		if user.ExpiresAt.Before(time.Now()) {
-			if err := h.services.DeleteSessionToken(cookie.Value); err != nil {
-				h.errorPage(w, http.StatusInternalServerError, err.Error())
-				return
-			}
-			next.ServeHTTP(w, r.WithContext(context.WithValue(r.Context(), ctxKeyUser, models.User{})))
+		if err != nil || user.ExpiresAt.Before(time.Now()) {
+			// Clear the invalid or expired session cookie
+			http.SetCookie(w, &http.Cookie{
+				Name:    "sessionID",
+				Value:   "",
+				Expires: time.Now().Add(-1 * time.Hour),
+			})
+
+			// Redirect to login or show error page
+			h.errorPage(w, http.StatusUnauthorized, "Session expired. Please log in again.")
 			return
 		}
 

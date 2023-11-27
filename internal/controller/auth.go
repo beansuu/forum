@@ -73,18 +73,26 @@ func (h *Handler) signIn(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case http.MethodGet:
 		cookie, err := r.Cookie("sessionID")
-		if err != nil {
+		if err != nil || cookie.Value == "" {
 			tmpl.Execute(w, nil)
 			return
 		}
 
-		if len(cookie.Value) != 0 {
-			http.Redirect(w, r, "/", http.StatusSeeOther)
+		// Verify if the session is valid
+		_, err = h.services.GetSessionToken(cookie.Value)
+		if err != nil {
+			// Clear the invalid session cookie
+			http.SetCookie(w, &http.Cookie{
+				Name:    "sessionID",
+				Value:   "",
+				Expires: time.Now().Add(-1 * time.Hour),
+			})
+			tmpl.Execute(w, nil)
 			return
 		}
-		if err := tmpl.Execute(w, nil); err != nil {
-			h.errorPage(w, http.StatusInternalServerError, err.Error())
-		}
+
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
 	case http.MethodPost:
 		email := r.FormValue("form-email")
 		password := r.FormValue("form-password")
